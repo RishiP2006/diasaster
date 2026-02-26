@@ -1,66 +1,62 @@
 # DisasterHQ — Disaster Management & Response System
 
-A full-stack disaster management platform built with React, TypeScript, Tailwind CSS, and Supabase.
+A full-stack disaster management platform built with React + TypeScript + Tailwind CSS + Supabase.
 
-## Features
+---
 
-- **Citizen** — Report disasters, track your own submissions
-- **Admin** — View all requests, assign authorities, close incidents; live stats dashboard
-- **Authority** — View assigned requests, update progress, mark resolved
-- **Volunteer** — Browse active requests, volunteer to help, track participation
+## ⚡ Quick Start
 
-## Tech Stack
+### 1. Seed the Database (required first!)
 
-- React 18 + TypeScript
-- Vite (build tool)
-- Tailwind CSS + shadcn/ui
-- Supabase (PostgreSQL backend)
-- React Query + react-router-dom
+Open your **Supabase project → SQL Editor** and run the contents of:
+```
+supabase/seed.sql
+```
 
-## Local Development
+This populates all tables: zones, crisis types, authorities, users, sample requests, assignments, and volunteer entries. Without this step the dropdowns (disaster type, zone) will be empty.
+
+### 2. Local Development
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Set up environment
-cp .env.example .env
-# Edit .env with your Supabase credentials
-
-# 3. Run dev server
+cp .env.example .env      # fill in your Supabase URL + anon key
 npm run dev
 ```
 
-## Deploying to Vercel
+### 3. Deploy to Vercel
 
 1. Push this repo to GitHub
-2. Import the repo on [vercel.com](https://vercel.com)
-3. Add these **Environment Variables** in Vercel project settings:
-   - `VITE_SUPABASE_URL` — your Supabase project URL
-   - `VITE_SUPABASE_PUBLISHABLE_KEY` — your Supabase anon key
-   - `VITE_SUPABASE_PROJECT_ID` — your Supabase project ref
-4. Deploy — Vercel automatically runs `npm run build`
+2. Import in [vercel.com](https://vercel.com/new)
+3. Add Environment Variables:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+4. Deploy — `vercel.json` handles SPA routing automatically.
 
-> The included `vercel.json` handles SPA routing (all paths → `index.html`).
+---
 
-## Database Schema
+## User Roles
 
-Tables: `User`, `authority`, `request`, `crisistype`, `zone`, `authorityassignment`, `userhelp`, `family`, `department`, `deptbranch`, `depthandlecrisistype`
+| Role | How determined | Dashboard |
+|---|---|---|
+| **Admin** | `User.level >= 5` | All requests, assign responders, force-close |
+| **Responder** (Authority) | From `authority` table | Assigned incidents + all requests view |
+| **Volunteer** | `User.wishtovolunteer = true` | Browse open requests, volunteer/withdraw |
+| **Citizen** | Default `User` | Public feed + submit own reports |
 
-### User Roles (determined at login)
-| Role | Source Table | Criteria |
-|------|-------------|----------|
-| CITIZEN | `User` | Default |
-| VOLUNTEER | `User` | `wishtovolunteer = true` |
-| ADMIN | `User` | `level >= 5` |
-| AUTHORITY | `authority` | Any authority record |
+---
+
+## Database Tables
+
+`zone` · `crisistype` · `department` · `deptbranch` · `authority` · `User` · `family` · `request` · `authorityassignment` · `userhelp` · `depthandlecrisistype`
+
+---
 
 ## Scripts
 
 ```bash
-npm run dev       # Start dev server
-npm run build     # Build for production
-npm run preview   # Preview production build locally
-npm run lint      # Run ESLint
-npm run test      # Run unit tests
+npm run dev       # dev server
+npm run build     # production build
+npm run preview   # preview build locally
+npm run lint      # ESLint
+npm run test      # unit tests
 ```
